@@ -5,10 +5,23 @@ import "github.com/spf13/viper"
 type Config struct {
 	App      AppConfig
 	Database DatabaseConfig
+	Auth     AuthConfig
+	JWT 	Secret
 }
 
 type AppConfig struct {
 	Port string
+}
+
+type AuthConfig struct {
+	Master struct {
+		Username string
+		Password string
+	}
+}
+
+type Secret struct {
+	Secret string
 }
 
 type DatabaseConfig struct {
@@ -42,6 +55,18 @@ func Load() *Config {
 			Password: viper.GetString("database.password"),
 			Name:     viper.GetString("database.name"),
 			SSLMode:  viper.GetString("database.sslmode"),
+		},
+		Auth: AuthConfig{
+			Master: struct {
+				Username string
+				Password string
+			}{
+				Username: viper.GetString("auth.master.username"),
+				Password: viper.GetString("auth.master.password"),
+			},
+		},
+		JWT: Secret{
+			Secret: viper.GetString("jwt.secret"),
 		},
 	}
 }
