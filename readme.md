@@ -252,5 +252,3 @@ parts ── categories
 
 material_requests ── status_histories
 ```
-
----# material-request-system-backend
