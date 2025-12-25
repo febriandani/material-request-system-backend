@@ -5,6 +5,14 @@ database:
   host: "localhost"
   port: "5432"
   user: "postgres"
-  password: "postgres"
+  password: "junior34"
   name: "managed_material_db"
   sslmode: "disable"
+
+auth:
+  master:
+    username: "admin"
+    password: "admin123"
+
+jwt:
+  secret: "OHNY8q+clIp3T+fnZSWiUx9EMhjKG8GrKyxXYl5gjiYAuFkcNTy/R8vPnsPGz1JYupSQaiR6qsnaTGtM/rQMTw=="

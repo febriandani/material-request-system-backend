@@ -19,7 +19,7 @@ func (r *repository) FindAll() ([]Department, error) {
 
 	query := `
 		SELECT id, name
-		FROM departments
+		FROM master.departments
 		ORDER BY name ASC
 	`
 

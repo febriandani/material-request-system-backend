@@ -20,7 +20,7 @@ func main() {
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
 
-	routes.Register(r, db)
+	routes.Register(r, db, cfg)
 
 	log.Println("server running on port", cfg.App.Port)
 	r.Run(":" + cfg.App.Port)
