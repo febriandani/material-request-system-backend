@@ -1,0 +1,10 @@
+app:
+  port: "8080"
+
+database:
+  host: "localhost"
+  port: "5432"
+  user: "postgres"
+  password: "postgres"
+  name: "managed_material_db"
+  sslmode: "disable"
