@@ -1,0 +1,5 @@
+# config files
+app.yaml
+configs/*.yaml
+configs/*.yml
+.env
