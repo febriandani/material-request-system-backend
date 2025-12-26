@@ -6,7 +6,7 @@ type Config struct {
 	App      AppConfig
 	Database DatabaseConfig
 	Auth     AuthConfig
-	JWT 	Secret
+	JWT      Secret
 }
 
 type AppConfig struct {
@@ -21,7 +21,9 @@ type AuthConfig struct {
 }
 
 type Secret struct {
-	Secret string
+	Secret            string
+	Expiration        int64
+	ExpirationRefresh int64
 }
 
 type DatabaseConfig struct {
@@ -66,7 +68,9 @@ func Load() *Config {
 			},
 		},
 		JWT: Secret{
-			Secret: viper.GetString("jwt.secret"),
+			Secret:            viper.GetString("jwt.secret"),
+			Expiration:        viper.GetInt64("jwt.expiration"),
+			ExpirationRefresh: viper.GetInt64("jwt.expirationRefresh"),
 		},
 	}
 }

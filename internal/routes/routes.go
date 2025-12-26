@@ -22,7 +22,7 @@ func Register(r *gin.Engine, db *sqlx.DB, cfg *config.Config) {
 	{
 		authRepo := auth.NewRepository(db)
 		authService := auth.NewService(authRepo)
-		authHandler := auth.NewHandler(authService, cfg.JWT.Secret)
+		authHandler := auth.NewHandler(authService, cfg.JWT.Secret, cfg.JWT.Expiration, cfg.JWT.ExpirationRefresh)
 
 		authGroup := api.Group("/auth")
 		authGroup.POST("/login", authHandler.Login)
