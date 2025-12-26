@@ -7,6 +7,7 @@ import (
 	config "github.com/febriandani/material-request-system-backend/internal/config"
 	auth "github.com/febriandani/material-request-system-backend/internal/domain/master/auth"
 	department "github.com/febriandani/material-request-system-backend/internal/domain/master/department"
+	user "github.com/febriandani/material-request-system-backend/internal/domain/master/user"
 	middleware "github.com/febriandani/material-request-system-backend/internal/middleware"
 )
 
@@ -27,6 +28,13 @@ func Register(r *gin.Engine, db *sqlx.DB, cfg *config.Config) {
 		authGroup := api.Group("/auth")
 		authGroup.POST("/login", authHandler.Login)
 		authGroup.POST("/refresh", authHandler.Refresh)
+		// Protected routes
+		authGroup.Use(
+			middleware.JWTAuth(
+				cfg.JWT.Secret,
+			),
+		)
+		authGroup.POST("/logout", authHandler.Logout)
 	}
 
 	// =====================
@@ -46,5 +54,23 @@ func Register(r *gin.Engine, db *sqlx.DB, cfg *config.Config) {
 		deptHandler := department.NewHandler(deptService)
 
 		master.GET("/departments", deptHandler.GetAll)
+	}
+
+	// =====================
+	// USER DATA (JWT AUTH)
+	// =====================
+	masterUser := api.Group("/user")
+	masterUser.Use(
+		middleware.JWTAuth(
+			cfg.JWT.Secret,
+		),
+	)
+
+	{
+		userRepo := user.NewRepository(db)
+		userService := user.NewService(userRepo)
+		userHandler := user.NewHandler(userService)
+
+		masterUser.GET("/", userHandler.GetAll)
 	}
 }

@@ -13,6 +13,7 @@ type Repository interface {
 	SaveRefreshToken(userID int64, tokenHash string, expiresAt time.Time) error
 	FindValidRefreshToken(ctx context.Context, userID int64, tokenHash string) (bool, error)
 	GetUserRole(ctx context.Context, userID int64) (string, error)
+	RevokeRefreshToken(ctx context.Context, userID int64, tokenHash string) error
 }
 
 type repository struct {
@@ -93,4 +94,16 @@ func (r *repository) GetUserRole(
 		userID,
 	)
 	return role, err
+}
+
+func (r *repository) RevokeRefreshToken(ctx context.Context, userID int64, tokenHash string) error {
+	query := `
+		UPDATE master.refresh_tokens
+		SET revoked = true
+		WHERE user_id = $1
+		  AND token_hash = $2
+		  AND revoked = false
+	`
+	_, err := r.db.ExecContext(ctx, query, userID, tokenHash)
+	return err
 }

@@ -15,6 +15,7 @@ import (
 type Service interface {
 	Login(username, password, jwtSecret string, jwtExpiration, jwtExpirationRefresh int64) (map[string]string, error)
 	ValidateRefreshToken(userID int64, refreshToken string) (bool, string, error)
+	Logout(userID int64, refreshToken string) error
 }
 
 type service struct {
@@ -84,4 +85,9 @@ func (s *service) ValidateRefreshToken(
 	}
 
 	return true, role, nil
+}
+
+func (s *service) Logout(userID int64, refreshToken string) error {
+	tokenHashBytes := utils.HashToken(refreshToken)
+	return s.repo.RevokeRefreshToken(context.Background(), userID, tokenHashBytes)
 }
