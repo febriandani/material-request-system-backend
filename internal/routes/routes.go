@@ -72,5 +72,6 @@ func Register(r *gin.Engine, db *sqlx.DB, cfg *config.Config) {
 		userHandler := user.NewHandler(userService)
 
 		masterUser.GET("/", userHandler.GetAll)
+		masterUser.GET("/approvers", userHandler.GetApprovers)
 	}
 }
