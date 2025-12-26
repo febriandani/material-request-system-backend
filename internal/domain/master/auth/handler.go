@@ -10,12 +10,14 @@ import (
 )
 
 type Handler struct {
-	service   Service
-	jwtSecret string
+	service              Service
+	jwtSecret            string
+	jwtExpiration        int64
+	jwtExpirationRefresh int64
 }
 
-func NewHandler(service Service, jwtSecret string) *Handler {
-	return &Handler{service: service, jwtSecret: jwtSecret}
+func NewHandler(service Service, jwtSecret string, jwtExpiration, jwtExpirationRefresh int64) *Handler {
+	return &Handler{service: service, jwtSecret: jwtSecret, jwtExpiration: jwtExpiration, jwtExpirationRefresh: jwtExpirationRefresh}
 }
 
 func (h *Handler) Login(c *gin.Context) {
@@ -26,7 +28,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := h.service.Login(req.Username, req.Password, h.jwtSecret)
+	token, err := h.service.Login(req.Username, req.Password, h.jwtSecret, h.jwtExpiration, h.jwtExpirationRefresh)
 	if err != nil {
 		response.Error(c, http.StatusUnauthorized, "UNAUTHORIZED", err.Error())
 		return
@@ -75,6 +77,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 		claims.UserID,
 		role,
 		h.jwtSecret,
+		h.jwtExpiration,
 	)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to generate token")

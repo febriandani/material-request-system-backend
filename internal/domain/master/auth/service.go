@@ -13,7 +13,7 @@ import (
 )
 
 type Service interface {
-	Login(username, password, jwtSecret string) (map[string]string, error)
+	Login(username, password, jwtSecret string, jwtExpiration, jwtExpirationRefresh int64) (map[string]string, error)
 	ValidateRefreshToken(userID int64, refreshToken string) (bool, string, error)
 }
 
@@ -25,7 +25,7 @@ func NewService(repo Repository) Service {
 	return &service{repo: repo}
 }
 
-func (s *service) Login(username, password, jwtSecret string) (map[string]string, error) {
+func (s *service) Login(username, password, jwtSecret string, jwtExpiration, jwtExpirationRefresh int64) (map[string]string, error) {
 	auth, userID, role, err := s.repo.FindByUsername(username)
 	if err != nil {
 		return nil, errors.New("invalid credentials")
@@ -38,8 +38,8 @@ func (s *service) Login(username, password, jwtSecret string) (map[string]string
 		return nil, errors.New("invalid credentials")
 	}
 
-	accessToken, _ := utils.GenerateAccessToken(userID, role, jwtSecret)
-	refreshToken, _ := utils.GenerateRefreshToken(userID, jwtSecret)
+	accessToken, _ := utils.GenerateAccessToken(userID, role, jwtSecret, jwtExpiration)
+	refreshToken, _ := utils.GenerateRefreshToken(userID, jwtSecret, jwtExpirationRefresh)
 
 	hash := utils.HashToken(refreshToken)
 	exp := time.Now().Add(14 * 24 * time.Hour)

@@ -18,6 +18,7 @@ func GenerateAccessToken(
 	userID int64,
 	role string,
 	secret string,
+	expiration int64,
 ) (string, error) {
 
 	claims := Claims{
@@ -25,7 +26,7 @@ func GenerateAccessToken(
 		Role:   role,
 		Type:   "access",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expiration) * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		},
@@ -38,13 +39,14 @@ func GenerateAccessToken(
 func GenerateRefreshToken(
 	userID int64,
 	secret string,
+	expirationRefresh int64,
 ) (string, error) {
 
 	claims := Claims{
 		UserID: userID,
 		Type:   "refresh",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expirationRefresh) * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
