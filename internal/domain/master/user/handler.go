@@ -1,0 +1,31 @@
+package user
+
+import (
+	"net/http"
+
+	"github.com/febriandani/material-request-system-backend/pkg/response"
+	"github.com/gin-gonic/gin"
+)
+
+type Handler struct {
+	service Service
+}
+
+func NewHandler(service Service) *Handler {
+	return &Handler{service: service}
+}
+
+func (h *Handler) GetAll(c *gin.Context) {
+	users, err := h.service.GetAll()
+	if err != nil {
+		response.Error(
+			c,
+			http.StatusInternalServerError,
+			"INTERNAL_ERROR",
+			"failed to fetch users",
+		)
+		return
+	}
+
+	response.Success(c, http.StatusOK, users)
+}

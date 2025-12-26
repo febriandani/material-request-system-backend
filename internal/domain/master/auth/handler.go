@@ -88,3 +88,34 @@ func (h *Handler) Refresh(c *gin.Context) {
 		"access_token": accessToken,
 	})
 }
+
+func (h *Handler) Logout(c *gin.Context) {
+	var req struct {
+		RefreshToken string `json:"refresh_token" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.Error(c, http.StatusBadRequest, "BAD_REQUEST", "invalid request")
+		return
+	}
+
+	// 1. Parse & validate refresh token
+	claims, err := utils.ParseToken(req.RefreshToken, h.jwtSecret)
+	if err != nil {
+		response.Error(c, http.StatusUnauthorized, "UNAUTHORIZED", "invalid refresh token")
+		return
+	}
+
+	err = h.service.Logout(
+		claims.UserID,
+		req.RefreshToken,
+	)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, "INTERNAL_ERROR", "failed to logout")
+		return
+	}
+
+	response.Success(c, http.StatusOK, gin.H{
+		"message": "logout successful",
+	})
+}
