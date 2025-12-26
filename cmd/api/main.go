@@ -5,6 +5,7 @@ import (
 
 	"github.com/febriandani/material-request-system-backend/internal/config"
 	"github.com/febriandani/material-request-system-backend/internal/database"
+	"github.com/febriandani/material-request-system-backend/internal/middleware"
 	"github.com/febriandani/material-request-system-backend/internal/routes"
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +20,8 @@ func main() {
 
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
+
+	r.Use(middleware.Cors(cfg.Cors))
 
 	routes.Register(r, db, cfg)
 

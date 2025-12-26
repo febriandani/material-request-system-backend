@@ -28,13 +28,14 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := h.service.Login(req.Username, req.Password, h.jwtSecret, h.jwtExpiration, h.jwtExpirationRefresh)
+	user, token, err := h.service.Login(req.Username, req.Password, h.jwtSecret, h.jwtExpiration, h.jwtExpirationRefresh)
 	if err != nil {
 		response.Error(c, http.StatusUnauthorized, "UNAUTHORIZED", err.Error())
 		return
 	}
 
 	response.Success(c, http.StatusOK, gin.H{
+		"user":  user,
 		"token": token,
 	})
 }

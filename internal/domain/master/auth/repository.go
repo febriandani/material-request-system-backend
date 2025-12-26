@@ -26,7 +26,7 @@ func NewRepository(db *sqlx.DB) Repository {
 
 func (r *repository) FindByUsername(username string) (*Authentication, int64, string, error) {
 	query := `
-		SELECT a.user_id, a.password, u.role
+		SELECT a.user_id, a.password, u.username, u.full_name, u.email, u.phone, u.role
 		FROM master.authentications a
 		JOIN master.users u ON u.id = a.user_id
 		WHERE u.username = $1
@@ -36,7 +36,7 @@ func (r *repository) FindByUsername(username string) (*Authentication, int64, st
 	var role string
 
 	err := r.db.QueryRowx(query, username).
-		Scan(&auth.UserID, &auth.Password, &role)
+		Scan(&auth.UserID, &auth.Password, &auth.Username, &auth.FullName, &auth.Email, &auth.Phone, &role)
 
 	if err != nil {
 		return nil, 0, "", errors.New("user not found")

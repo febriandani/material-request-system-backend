@@ -7,6 +7,7 @@ type Config struct {
 	Database DatabaseConfig
 	Auth     AuthConfig
 	JWT      Secret
+	Cors     Cors
 }
 
 type AppConfig struct {
@@ -24,6 +25,12 @@ type Secret struct {
 	Secret            string
 	Expiration        int64
 	ExpirationRefresh int64
+}
+
+type Cors struct {
+	Methods []string
+	Headers []string
+	Origins []string
 }
 
 type DatabaseConfig struct {
@@ -71,6 +78,11 @@ func Load() *Config {
 			Secret:            viper.GetString("jwt.secret"),
 			Expiration:        viper.GetInt64("jwt.expiration"),
 			ExpirationRefresh: viper.GetInt64("jwt.expirationRefresh"),
+		},
+		Cors: Cors{
+			Methods: viper.GetStringSlice("route.methods"),
+			Headers: viper.GetStringSlice("route.headers"),
+			Origins: viper.GetStringSlice("route.origin"),
 		},
 	}
 }
