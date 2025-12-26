@@ -29,3 +29,18 @@ func (h *Handler) GetAll(c *gin.Context) {
 
 	response.Success(c, http.StatusOK, users)
 }
+
+func (h *Handler) GetApprovers(c *gin.Context) {
+	approvers, err := h.service.GetApprovers()
+	if err != nil {
+		response.Error(
+			c,
+			http.StatusInternalServerError,
+			"INTERNAL_ERROR",
+			"failed to fetch approvers",
+		)
+		return
+	}
+
+	response.Success(c, http.StatusOK, approvers)
+}
